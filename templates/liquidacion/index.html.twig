@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liquidaciones{% endblock %}
+
+{% block body %}
+<div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
+    <h1>Liquidaciones</h1>
+
+    <table border="1" cellpadding="8" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Propiedad</th>
+                <th>Período</th>
+                <th>Estado</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for liquidacion in liquidaciones %}
+                <tr>
+                   <td>
+    <a href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}">
+        {{ liquidacion.id }}
+    </a>
+</td>
+                    <td>{{ liquidacion.propiedad.nombre }}</td>
+                    <td>{{ liquidacion.periodo }}</td>
+                    <td>{{ liquidacion.estado }}</td>
+                    <td>{{ liquidacion.total }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">No hay liquidaciones</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
