@@ -1,0 +1,39 @@
+{
+  "files.associations": {
+    "*.html.twig": "twig",
+    "*.twig": "twig"
+  },
+  "emmet.includeLanguages": {
+    "twig": "html"
+  },
+  "[twig]": {
+    "editor.defaultFormatter": "mblode.twig-language-2",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 4
+  },
+  "twig-language-2.formatting": true,
+  "twig-language-2.indentStyle": "space",
+  "twig-language-2.tabSize": 4,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4
+  },
+  "php-cs-fixer.executablePath": "${workspaceFolder}/bin/php-cs-fixer.cmd",
+  "php-cs-fixer.executablePathWindows": "${workspaceFolder}/bin/php-cs-fixer.cmd",
+  "php-cs-fixer.config": ".php-cs-fixer.dist.php",
+  "php-cs-fixer.onsave": true,
+  "php-cs-fixer.autoFormatOnSave": true
+}

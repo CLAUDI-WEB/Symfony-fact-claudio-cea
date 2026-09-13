@@ -19,10 +19,8 @@ final class LiquidacionController extends AbstractController
     #[Route('/liquidaciones', name: 'app_liquidacion_index')]
     public function index(LiquidacionRepository $liquidacionRepository): Response
     {
-        // Trae todas las liquidaciones ordenadas por id ascendente
         $liquidaciones = $liquidacionRepository->findBy([], ['id' => 'ASC']);
 
-        // Pasa la lista a la vista Twig
         return $this->render('liquidacion/index.html.twig', [
             'liquidaciones' => $liquidaciones,
         ]);
@@ -39,7 +37,6 @@ final class LiquidacionController extends AbstractController
     {
         $liquidacion = $liquidacionRepository->find($id);
 
-        // Validación: si no existe, responde 404
         if (!$liquidacion) {
             throw $this->createNotFoundException('Liquidación no encontrada');
         }
@@ -57,7 +54,7 @@ final class LiquidacionController extends AbstractController
      * requirements id=\d+ → solo acepta números en {id}
      */
     #[Route('/liquidaciones/{id}/pagar', name: 'app_liquidacion_pagar', methods: ['POST'], requirements: ['id' => '\d+'])]
-    public function pagar(
+    public function pay(
         int $id,
         Request $request,
         LiquidacionRepository $liquidacionRepository,
@@ -65,34 +62,99 @@ final class LiquidacionController extends AbstractController
     ): Response {
         $liquidacion = $liquidacionRepository->find($id);
 
-        // Validación: liquidación debe existir
         if (!$liquidacion) {
             throw $this->createNotFoundException('Liquidación no encontrada');
         }
 
-        // Validación CSRF: el token del formulario debe coincidir (evita requests falsos)
         if (!$this->isCsrfTokenValid('pagar'.$id, $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF inválido');
         }
 
-        // Validación de negocio: si ya tiene factura, no se puede pagar de nuevo
         if ($liquidacion->isFacturada()) {
             $this->addFlash('error', 'No se puede pagar: ya está facturada.');
             return $this->redirectToRoute('app_liquidacion_show', ['id' => $id]);
         }
 
-        // Validación de negocio: solo se paga si está en draft
         if (!$liquidacion->isDraft()) {
             $this->addFlash('error', 'Solo se pueden pagar liquidaciones en estado draft.');
             return $this->redirectToRoute('app_liquidacion_show', ['id' => $id]);
         }
 
-        // Acción: cambia estado y guarda en BD
         $liquidacion->setEstado('paid');
         $em->flush();
 
-        // Mensaje flash de éxito y vuelve al detalle
         $this->addFlash('success', 'Liquidación pagada.');
+        return $this->redirectToRoute('app_liquidacion_show', ['id' => $id]);
+    }
+
+    /**
+     * Muestra formulario manual para editar liquidación + ítems.
+     * Ruta: GET /liquidaciones/modify/{id}
+     * Nombre: app_liquidacion_modify_form
+     */
+    #[Route('/liquidaciones/modify/{id}', name: 'app_liquidacion_modify_form', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function update(int $id, LiquidacionRepository $liquidacionRepository): Response
+    {
+        $liquidacion = $liquidacionRepository->find($id);
+
+        if (!$liquidacion) {
+            throw $this->createNotFoundException('Liquidación no encontrada');
+        }
+
+        return $this->render('liquidacion/mod.html.twig', [
+            'liquidacion' => $liquidacion,
+        ]);
+    }
+
+    /**
+     * Guarda cambios enviados por el formulario manual.
+     * Ruta: POST /liquidaciones/{id}/modificar
+     * Nombre: app_liquidacion_modify
+     */
+    #[Route('/liquidaciones/{id}/modificar', name: 'app_liquidacion_modify', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function modifypost(
+        int $id,
+        Request $request,
+        LiquidacionRepository $liquidacionRepository,
+        EntityManagerInterface $em,
+    ): Response {
+        $liquidacion = $liquidacionRepository->find($id);
+
+        if (!$liquidacion) {
+            throw $this->createNotFoundException('Liquidación no encontrada');
+        }
+
+        if ($liquidacion->isFacturada()) {
+            $this->addFlash('error', 'No se puede editar: ya está facturada.');
+
+            return $this->redirectToRoute('app_liquidacion_show', ['id' => $id]);
+        }
+
+        if (!$this->isCsrfTokenValid('modificar'.$id, $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF inválido');
+        }
+
+        $liquidacion->setPeriodo((string) $request->request->get('periodo'));
+        $liquidacion->setEstado((string) $request->request->get('estado'));
+
+        $itemsData = $request->request->all('items');
+
+        foreach ($liquidacion->getItems() as $index => $item) {
+            if (!isset($itemsData[$index])) {
+                continue;
+            }
+
+            $row = $itemsData[$index];
+            $item->setTipo((string) ($row['tipo'] ?? $item->getTipo()));
+            $item->setDescripcion((string) ($row['descripcion'] ?? $item->getDescripcion()));
+            $item->setMonto((int) ($row['monto'] ?? $item->getMonto()));
+        }
+
+        $liquidacion->recalculate();
+        $em->flush();
+
+        $this->addFlash('success', 'Liquidación actualizada.');
+
         return $this->redirectToRoute('app_liquidacion_show', ['id' => $id]);
     }
 }

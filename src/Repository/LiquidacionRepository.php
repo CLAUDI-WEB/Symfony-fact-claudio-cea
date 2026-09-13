@@ -16,28 +16,17 @@ class LiquidacionRepository extends ServiceEntityRepository
         parent::__construct($registry, Liquidacion::class);
     }
 
-    //    /**
-    //     * @return Liquidacion[] Returns an array of Liquidacion objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Liquidacion
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findPendientesFacturacion(string $periodo): array
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.periodo = :periodo')
+            ->andWhere('l.estado = :estado')
+            ->andWhere('l.factura IS NULL')
+            ->setParameter('periodo', $periodo)
+            ->setParameter('estado', 'paid')
+            ->setParameter('estado', 'draft')
+            ->orderBy('l.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

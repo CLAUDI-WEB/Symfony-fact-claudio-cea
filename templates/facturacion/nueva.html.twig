@@ -1,0 +1,121 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Nueva facturación{% endblock %}
+
+{% block body %}
+    <h1>Generador de facturación</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="flash-success">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="flash-error">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
+        {{ form_row(form.periodo) }}
+        <button type="submit">Generar preview</button>
+    {{ form_end(form) }}
+
+    {% if preview %}
+        <hr>
+
+        <h2>Preview</h2>
+
+        <p>
+            Estas {{ preview.cantidad }}
+            liquidaciones se incluirán.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Propiedad</th>
+                    <th>Empresa</th>
+                    <th>Receptor</th>
+                    <th>Período</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for liquidacion in preview.liquidaciones %}
+                    <tr>
+                        <td>{{ liquidacion.id }}</td>
+                        <td>
+                            {{ liquidacion.propiedad.nombre }}
+                        </td>
+                        <td>
+                            {{ liquidacion.propiedad.empresa.razonSocial }}
+                        </td>
+                        <td>
+                            {{ liquidacion.propiedad.arrendatario.nombre }}
+                        </td>
+                        <td>{{ liquidacion.periodo }}</td>
+                        <td>{{ liquidacion.estado }}</td>
+                        <td>
+                            ${{ liquidacion.total|number_format(0, ',', '.') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Totales</h3>
+
+        <ul>
+            <li>
+                Neto:
+                ${{ preview.neto|number_format(0, ',', '.') }}
+            </li>
+            <li>
+                IVA 19%:
+                ${{ preview.iva|number_format(0, ',', '.') }}
+            </li>
+            <li>
+                Total:
+                ${{ preview.total|number_format(0, ',', '.') }}
+            </li>
+        </ul>
+
+        <form
+            action="{{ path('facturacion_confirmar') }}"
+            method="post"
+        >
+            <input
+                type="hidden"
+                name="periodo"
+                value="{{ preview.periodo }}"
+            >
+
+            <input
+                type="hidden"
+                name="_token"
+                value="{{ csrf_token('facturar_' ~ preview.periodo) }}"
+            >
+
+            <button type="submit">
+                Confirmar y crear factura
+            </button>
+        </form>
+    {% endif %}
+    <style>
+  table {
+    width: 100%;
+    border-collapse: collapse; /* Une los bordes en una sola línea */
+  }
+
+  th, td {
+    border: 1px solid #ccc; /* Define el grosor, estilo y color de la línea */
+    padding: 8px;           /* Espacio interno para mayor legibilidad */
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+</style>
+{% endblock %}

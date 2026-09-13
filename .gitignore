@@ -18,3 +18,16 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> prettier / npm ###
+/node_modules/
+###< prettier / npm ###
+
+###> php-cs-fixer ###
+/.php-cs-fixer.cache
+###< php-cs-fixer ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

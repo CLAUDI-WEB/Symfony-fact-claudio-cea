@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "mblode.twig-language-2",
+    "esbenp.prettier-vscode",
+    "bmewburn.vscode-intelephense-client",
+    "junstyle.php-cs-fixer"
+  ]
+}

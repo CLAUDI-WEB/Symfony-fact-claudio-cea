@@ -3,55 +3,55 @@
 {% block title %}Liquidación #{{ liquidacion.id }}{% endblock %}
 
 {% block body %}
-<div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
-    <p><a href="{{ path('app_liquidacion_index') }}">&larr; Volver al listado</a></p>
+    <div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
+        <p><a href="{{ path('app_liquidacion_index') }}" data-turbo="false">&larr; Volver al listado</a></p>
 
-    <h1>Liquidación #{{ liquidacion.id }}</h1>
+        <h1>Liquidación #{{ liquidacion.id }}</h1>
 
-    {% for message in app.flashes('success') %}
-    <p style="color: green;">{{ message }}</p>
-{% endfor %}
-{% for message in app.flashes('error') %}
-    <p style="color: red;">{{ message }}</p>
-{% endfor %}
+        {% for message in app.flashes('success') %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <p style="color: red;">{{ message }}</p>
+        {% endfor %}
 
-    <ul>
-        <li><strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}</li>
-        <li><strong>Período:</strong> {{ liquidacion.periodo }}</li>
-        <li><strong>Estado:</strong> {{ liquidacion.estado }}</li>
-        <li><strong>Total:</strong> {{ liquidacion.total }}</li>
-    </ul>
+        <ul>
+            <li><strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}</li>
+            <li><strong>Período:</strong> {{ liquidacion.periodo }}</li>
+            <li><strong>Estado:</strong> {{ liquidacion.estado }}</li>
+            <li><strong>Total:</strong> {{ liquidacion.total }}</li>
+        </ul>
 
-    <h2>Ítems</h2>
-    <table border="1" cellpadding="8" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                <th>Monto</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in liquidacion.items %}
+        <h2>Ítems</h2>
+        <table border="1" cellpadding="8" cellspacing="0" width="100%">
+            <thead>
                 <tr>
-                    <td>{{ item.tipo }}</td>
-                    <td>{{ item.descripcion }}</td>
-                    <td>{{ item.monto }}</td>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">Sin ítems</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% if liquidacion.estado == 'draft' and not liquidacion.facturada %}
-    <form method="post" action="{{ path('app_liquidacion_pagar', {id: liquidacion.id}) }}" style="margin-top: 1.5em;">
-        <input type="hidden" name="_token" value="{{ csrf_token('pagar' ~ liquidacion.id) }}">
-        <button type="submit">Pagar liquidación</button>
-    </form>
-{% elseif liquidacion.estado == 'paid' %}
-    <p style="margin-top: 1.5em;"><em>Esta liquidación ya está pagada.</em></p>
-{% endif %}
-</div>
+            </thead>
+            <tbody>
+                {% for item in liquidacion.items %}
+                    <tr>
+                        <td>{{ item.tipo }}</td>
+                        <td>{{ item.descripcion }}</td>
+                        <td>{{ item.monto }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">Sin ítems</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if liquidacion.estado == 'draft' and not liquidacion.facturada %}
+            <form method="post" action="{{ path('app_liquidacion_pagar', {id: liquidacion.id}) }}" style="margin-top: 1.5em;">
+                <input type="hidden" name="_token" value="{{ csrf_token('pagar' ~ liquidacion.id) }}">
+                <button type="submit">Pagar liquidación</button>
+            </form>
+        {% elseif liquidacion.estado == 'paid' %}
+            <p style="margin-top: 1.5em;"><em>Esta liquidación ya está pagada.</em></p>
+        {% endif %}
+    </div>
 {% endblock %}

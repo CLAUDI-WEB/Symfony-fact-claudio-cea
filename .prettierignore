@@ -1,0 +1,21 @@
+# Dependencias y runtime
+vendor/
+var/
+node_modules/
+public/bundles/
+public/assets/
+
+# Lock / entorno
+composer.lock
+package-lock.json
+.env
+.env.*
+!.env
+
+# Symfony / Docker
+migrations/
+compose.override.yaml
+
+# Binarios y cache
+*.min.js
+*.min.css

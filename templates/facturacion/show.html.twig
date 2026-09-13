@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Factura #{{ factura.folio }}
+{% endblock %}
+
+{% block body %}
+    <h1>Factura #{{ factura.folio }}</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="flash-success">{{ message }}</div>
+    {% endfor %}
+
+    <ul>
+        <li>Período: {{ factura.periodo }}</li>
+        <li>
+            Fecha:
+            {{ factura.fechaEmision|date('d-m-Y') }}
+        </li>
+        <li>
+            Empresa:
+            {{ factura.empresa.razonSocial }}
+        </li>
+        <li>
+            Receptor:
+            {{ factura.arrendatario.nombre }}
+        </li>
+        <li>
+            Neto:
+            ${{ factura.neto|number_format(0, ',', '.') }}
+        </li>
+        <li>
+            IVA:
+            ${{ factura.iva|number_format(0, ',', '.') }}
+        </li>
+        <li>
+            Total:
+            ${{ factura.total|number_format(0, ',', '.') }}
+        </li>
+    </ul>
+
+    <h2>Snapshot facturado</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in factura.items %}
+                <tr>
+                    <td>{{ item.descripcion }}</td>
+                    <td>
+                        ${{ item.monto|number_format(0, ',', '.') }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        <a href="{{ path('facturacion_archivo', {id: factura.id}) }}">
+            Descargar archivo plano
+        </a>
+    </p>
+
+    <p>
+        <a href="{{ path('facturacion_nueva') }}">
+            Nueva facturación
+        </a>
+    </p>
+{% endblock %}
