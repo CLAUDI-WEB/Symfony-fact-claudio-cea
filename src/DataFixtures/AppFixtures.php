@@ -88,8 +88,8 @@ class AppFixtures extends Fixture
         // Liquidación 1 (paid) - mismo período
         $liq1 = (new Liquidacion())
             ->setPropiedad($propiedad)
-            ->setPeriodo('2026-03')
-            ->setEstado('paid');
+            ->setPeriodo('2026-02')
+            ->setEstado('draft');
 
         $liq1->addItem(
             (new LiquidacionItem())
