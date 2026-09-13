@@ -1,0 +1,352 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --pop-blue: #38bdf8;
+        --pop-blue-dark: #0ea5e9;
+        --pop-green: #22c55e;
+        --pop-pink: #db2777;
+        --pop-text: #1f2937;
+        --pop-muted: #6b7280;
+        --pop-border: #e5e7eb;
+        --pop-panel: rgba(255, 255, 255, 0.94);
+    }
+
+    .pop-page {
+        min-height: 100vh;
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        color: var(--pop-text);
+        background:
+            linear-gradient(120deg, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.25)),
+            url("https://cdn.prod.website-files.com/68126ddb0b2dfefdb6188bee%2F6821678e8ced6b2225b1f2e0_property-video-poster-00001.jpg")
+                center / cover no-repeat fixed;
+    }
+
+    .pop-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.9rem 1.5rem;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid var(--pop-border);
+        backdrop-filter: blur(8px);
+    }
+
+    .pop-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 0.95rem;
+    }
+
+    .pop-dots {
+        width: 1.1rem;
+        height: 0.55rem;
+        border-radius: 999px;
+        background:
+            radial-gradient(circle at 15% 50%, var(--pop-pink) 0 28%, transparent 29%),
+            radial-gradient(circle at 50% 50%, var(--pop-green) 0 28%, transparent 29%),
+            radial-gradient(circle at 85% 50%, var(--pop-blue) 0 28%, transparent 29%);
+    }
+
+    .pop-muted {
+        color: var(--pop-muted);
+        font-weight: 500;
+    }
+
+    .pop-btn,
+    .pop-panel button[type="submit"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.65rem 1.15rem;
+        border: 0;
+        border-radius: 999px;
+        background: var(--pop-blue);
+        color: #fff !important;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none !important;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.28);
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .pop-btn:hover,
+    .pop-panel button[type="submit"]:hover {
+        background: var(--pop-blue-dark);
+        transform: translateY(-1px);
+    }
+
+    .pop-btn--ghost {
+        background: #fff;
+        color: var(--pop-text) !important;
+        border: 1px solid var(--pop-border);
+        box-shadow: none;
+    }
+
+    .pop-btn--ghost:hover {
+        background: #f8fafc;
+    }
+
+    .pop-main {
+        padding: 2rem 1.25rem 3rem;
+    }
+
+    .pop-panel {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 1.75rem 1.5rem 1.5rem;
+        background: var(--pop-panel);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 18px;
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
+    }
+
+    .pop-pill {
+        display: inline-block;
+        margin: 0 0 0.75rem;
+        padding: 0.28rem 0.7rem;
+        border-radius: 999px;
+        background: var(--pop-pink);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .pop-panel h1 {
+        margin: 0 0 0.35rem;
+        font-size: clamp(1.7rem, 3vw, 2.2rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .pop-panel h2,
+    .pop-panel h3 {
+        margin: 1.5rem 0 0.75rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .pop-subtitle,
+    .pop-note {
+        margin: 0 0 1.4rem;
+        color: var(--pop-muted);
+        font-size: 0.98rem;
+        line-height: 1.5;
+    }
+
+    .pop-back {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: var(--pop-blue-dark);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .pop-back:hover {
+        text-decoration: underline;
+    }
+
+    .pop-flash {
+        margin: 0 0 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .pop-flash--success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .pop-flash--error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .pop-list {
+        margin: 0 0 1.25rem;
+        padding: 0;
+        list-style: none;
+    }
+
+    .pop-list li {
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--pop-border);
+        font-size: 0.95rem;
+    }
+
+    .pop-list li:last-child {
+        border-bottom: none;
+    }
+
+    .pop-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        border: 1px solid var(--pop-border);
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .pop-table th,
+    .pop-table td {
+        padding: 0.85rem 0.9rem;
+        text-align: left;
+        border-bottom: 1px solid var(--pop-border);
+        font-size: 0.93rem;
+        vertical-align: middle;
+    }
+
+    .pop-table th {
+        background: #f8fafc;
+        color: #374151;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .pop-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .pop-table tbody tr:hover {
+        background: #f0f9ff;
+    }
+
+    .pop-link {
+        color: var(--pop-blue-dark);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .pop-link:hover {
+        text-decoration: underline;
+    }
+
+    .pop-badge {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: lowercase;
+    }
+
+    .pop-badge--draft {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .pop-badge--paid {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .pop-total {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .pop-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        white-space: nowrap;
+    }
+
+    .pop-actions img {
+        display: block;
+        opacity: 0.9;
+    }
+
+    .pop-actions a:hover img {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+
+    .pop-form-row {
+        margin: 0 0 1rem;
+    }
+
+    .pop-form-row label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .pop-panel input[type="text"],
+    .pop-panel input[type="number"],
+    .pop-panel select,
+    .pop-panel textarea,
+    .pop-panel .form-widget input,
+    .pop-panel .form-widget select {
+        width: 100%;
+        max-width: 420px;
+        box-sizing: border-box;
+        padding: 0.65rem 0.8rem;
+        border: 1px solid var(--pop-border);
+        border-radius: 10px;
+        font: inherit;
+        background: #fff;
+    }
+
+    .pop-panel fieldset {
+        margin: 0 0 1rem;
+        padding: 1rem;
+        border: 1px solid var(--pop-border);
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .pop-panel legend {
+        padding: 0 0.4rem;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .pop-meta {
+        margin: 0 0 1.25rem;
+        color: var(--pop-muted);
+        font-size: 0.95rem;
+    }
+
+    .pop-actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        align-items: center;
+    }
+
+    @media (max-width: 720px) {
+        .pop-topbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .pop-btn,
+        .pop-panel button[type="submit"] {
+            text-align: center;
+        }
+
+        .pop-panel {
+            padding: 1.25rem 1rem;
+        }
+
+        .pop-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>

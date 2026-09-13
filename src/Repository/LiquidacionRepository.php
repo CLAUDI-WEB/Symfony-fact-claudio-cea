@@ -24,7 +24,6 @@ class LiquidacionRepository extends ServiceEntityRepository
             ->andWhere('l.factura IS NULL')
             ->setParameter('periodo', $periodo)
             ->setParameter('estado', 'paid')
-            ->setParameter('estado', 'draft')
             ->orderBy('l.id', 'ASC')
             ->getQuery()
             ->getResult();

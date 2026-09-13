@@ -3,67 +3,108 @@
 {% block title %}Liquidaciones{% endblock %}
 
 {% block body %}
-    <div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
-        <h1>Liquidaciones</h1>
+{% include 'partials/pop_styles.html.twig' %}
 
-        <table border="1" cellpadding="8" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Propiedad</th>
-                    <th>Período</th>
-                    <th>Estado</th>
-                    <th>Total</th>
-                    <th>modificar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for liquidacion in liquidaciones %}
+<div class="pop-page">
+    <header class="pop-topbar">
+        <div class="pop-brand">
+            <span class="pop-dots" aria-hidden="true"></span>
+            <strong>Facturación</strong>
+            <span class="pop-muted">· Liquidaciones</span>
+        </div>
+        <a class="pop-btn" href="{{ path('facturacion_nueva') }}" data-turbo="false">
+            Generar facturación
+        </a>
+    </header>
+
+    <main class="pop-main">
+        <div class="pop-panel">
+            <p class="pop-pill">Administración</p>
+            <h1>Liquidaciones</h1>
+            <p class="pop-subtitle">
+                Revisa estados, edita borradores y descarga facturas ya emitidas.
+            </p>
+
+            <table class="pop-table">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}" data-turbo="false">
-                                {{ liquidacion.id }}
-                            </a>
-                        </td>
-                        <td>{{ liquidacion.propiedad.nombre }}</td>
-                        <td>{{ liquidacion.periodo }}</td>
-                        <td>{{ liquidacion.estado }}</td>
-                        <td>{{ liquidacion.total }}</td>
-                        <td><a href="{{ path('app_liquidacion_modify_form', {id: liquidacion.id}) }}" data-turbo="false">
-                                Edit
-                            </a></td>
+                        <th>ID</th>
+                        <th>Propiedad</th>
+                        <th>Período</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5">No hay liquidaciones</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for liquidacion in liquidaciones %}
+                        <tr>
+                            <td>
+                                <a
+                                    class="pop-link"
+                                    href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}"
+                                    data-turbo="false"
+                                >
+                                    #{{ liquidacion.id }}
+                                </a>
+                            </td>
+                            <td>{{ liquidacion.propiedad.nombre }}</td>
+                            <td>{{ liquidacion.periodo }}</td>
+                            <td>
+                                <span class="pop-badge pop-badge--{{ liquidacion.estado }}">
+                                    {{ liquidacion.estado }}
+                                </span>
+                            </td>
+                            <td class="pop-total">
+                                ${{ liquidacion.total|number_format(0, ',', '.') }}
+                            </td>
+                            <td class="pop-actions">
+                                {% if liquidacion.estado == 'draft' and not liquidacion.facturada %}
+                                    <a
+                                        href="{{ path('app_liquidacion_modify_form', {id: liquidacion.id}) }}"
+                                        data-turbo="false"
+                                        title="Editar"
+                                    >
+                                        <img
+                                            src="{{ asset('edit.svg') }}"
+                                            alt="Editar"
+                                            width="20"
+                                            height="20"
+                                        >
+                                    </a>
+                                {% else %}
+                                    <img
+                                        src="{{ asset('close.svg') }}"
+                                        alt="Facturado/Pagado"
+                                        title="Facturado/Pagado"
+                                        width="20"
+                                        height="20"
+                                    >
+                                {% endif %}
 
-        <h1>Liquidaciones</h1>
-        <p>
-            <a href="{{ path('facturacion_nueva') }}" data-turbo="false">Generar facturación</a>
-        </p>
-    </div>
-
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse; /* Une los bordes en una sola línea */
-  }
-
-  th, td {
-    border: 1px solid #ccc; /* Define el grosor, estilo y color de la línea */
-    padding: 8px;           /* Espacio interno para mayor legibilidad */
-    text-align: left;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-</style>
-
+                                {% if liquidacion.factura %}
+                                    <a
+                                        href="{{ path('facturacion_archivo', {id: liquidacion.factura.id}) }}"
+                                        title="Descargar factura"
+                                    >
+                                        <img
+                                            src="{{ asset('download2.svg') }}"
+                                            alt="Descargar Factura"
+                                            width="20"
+                                            height="20"
+                                        >
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">No hay liquidaciones</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
 {% endblock %}
-
-

@@ -1,74 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-    Factura #{{ factura.folio }}
-{% endblock %}
+{% block title %}Factura #{{ factura.folio }}{% endblock %}
 
 {% block body %}
-    <h1>Factura #{{ factura.folio }}</h1>
+{% include 'partials/pop_styles.html.twig' %}
 
-    {% for message in app.flashes('success') %}
-        <div class="flash-success">{{ message }}</div>
-    {% endfor %}
+<div class="pop-page">
+    <header class="pop-topbar">
+        <div class="pop-brand">
+            <span class="pop-dots" aria-hidden="true"></span>
+            <strong>Facturación</strong>
+            <span class="pop-muted">· Factura</span>
+        </div>
+        <div class="pop-actions">
+            <a class="pop-btn pop-btn--ghost" href="{{ path('app_liquidacion_index') }}" data-turbo="false">
+                Liquidaciones
+            </a>
+            <a class="pop-btn" href="{{ path('facturacion_nueva') }}" data-turbo="false">
+                Nueva facturación
+            </a>
+        </div>
+    </header>
 
-    <ul>
-        <li>Período: {{ factura.periodo }}</li>
-        <li>
-            Fecha:
-            {{ factura.fechaEmision|date('d-m-Y') }}
-        </li>
-        <li>
-            Empresa:
-            {{ factura.empresa.razonSocial }}
-        </li>
-        <li>
-            Receptor:
-            {{ factura.arrendatario.nombre }}
-        </li>
-        <li>
-            Neto:
-            ${{ factura.neto|number_format(0, ',', '.') }}
-        </li>
-        <li>
-            IVA:
-            ${{ factura.iva|number_format(0, ',', '.') }}
-        </li>
-        <li>
-            Total:
-            ${{ factura.total|number_format(0, ',', '.') }}
-        </li>
-    </ul>
+    <main class="pop-main">
+        <div class="pop-panel">
+            <p class="pop-pill">Emitida</p>
+            <h1>Factura #{{ factura.folio }}</h1>
+            <p class="pop-subtitle">Resumen de la factura y descarga del archivo plano.</p>
 
-    <h2>Snapshot facturado</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Descripción</th>
-                <th>Monto</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in factura.items %}
-                <tr>
-                    <td>{{ item.descripcion }}</td>
-                    <td>
-                        ${{ item.monto|number_format(0, ',', '.') }}
-                    </td>
-                </tr>
+            {% for message in app.flashes('success') %}
+                <div class="pop-flash pop-flash--success">{{ message }}</div>
             {% endfor %}
-        </tbody>
-    </table>
 
-    <p>
-        <a href="{{ path('facturacion_archivo', {id: factura.id}) }}">
-            Descargar archivo plano
-        </a>
-    </p>
+            <ul class="pop-list">
+                <li><strong>Período:</strong> {{ factura.periodo }}</li>
+                <li><strong>Fecha:</strong> {{ factura.fechaEmision|date('d-m-Y') }}</li>
+                <li><strong>Empresa:</strong> {{ factura.empresa.razonSocial }}</li>
+                <li><strong>Receptor:</strong> {{ factura.arrendatario.nombre }}</li>
+                <li>
+                    <strong>Neto:</strong>
+                    <span class="pop-total">${{ factura.neto|number_format(0, ',', '.') }}</span>
+                </li>
+                <li>
+                    <strong>IVA:</strong>
+                    <span class="pop-total">${{ factura.iva|number_format(0, ',', '.') }}</span>
+                </li>
+                <li>
+                    <strong>Total:</strong>
+                    <span class="pop-total">${{ factura.total|number_format(0, ',', '.') }}</span>
+                </li>
+            </ul>
 
-    <p>
-        <a href="{{ path('facturacion_nueva') }}">
-            Nueva facturación
-        </a>
-    </p>
+            <h2>Snapshot facturado</h2>
+            <table class="pop-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in factura.items %}
+                        <tr>
+                            <td>{{ item.descripcion }}</td>
+                            <td class="pop-total">
+                                ${{ item.monto|number_format(0, ',', '.') }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pop-actions-row">
+                <a class="pop-btn" href="{{ path('facturacion_archivo', {id: factura.id}) }}">
+                    Descargar archivo
+                </a>
+                <a class="pop-btn pop-btn--ghost" href="{{ path('facturacion_nueva') }}" data-turbo="false">
+                    Nueva facturación
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
 {% endblock %}

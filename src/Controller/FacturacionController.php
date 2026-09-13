@@ -29,30 +29,22 @@ class FacturacionController extends AbstractController
         Request $request, // Datos HTTP de la petición (GET/POST)
         FacturacionService $facturacionService, // Lógica de preview/crear (inyectada)
     ): Response {
-        // Crea el formulario del período (campo YYYY-MM)
         $form = $this->createForm(FacturacionPeriodoType::class);
 
-        // Si vino POST, llena el form con los datos enviados
         $form->handleRequest($request);
 
-        // Por defecto no hay preview (primera visita GET)
         $preview = null;
 
-        // Solo si el usuario envió el form y pasó validaciones (NotBlank, Regex)
         if ($form->isSubmitted() && $form->isValid()) {
-            // Lee el período tipado como string, ej. "2026-03"
             $periodo = (string) $form->get('periodo')->getData();
 
             try {
-                // Consulta liquidaciones paid sin factura y calcula neto/IVA/total
                 $preview = $facturacionService->preview($periodo);
             } catch (\DomainException|\InvalidArgumentException $exception) {
-                // Sin pendientes o período inválido → mensaje flash de error
                 $this->addFlash('error', $exception->getMessage());
             }
         }
 
-        // Renderiza la vista con el form y el preview (null o array)
         return $this->render('facturacion/nueva.html.twig', [
             'form' => $form,
             'preview' => $preview,
@@ -74,13 +66,12 @@ class FacturacionController extends AbstractController
         Request $request,
         FacturacionService $facturacionService,
     ): Response {
-        // Período oculto enviado desde el form de confirmación del Twig
+
         $periodo = (string) $request->request->get('periodo');
 
-        // Valida token CSRF para evitar envíos falsos desde otra página
         if (
             !$this->isCsrfTokenValid(
-                'facturar_'.$periodo, // Debe coincidir con csrf_token('facturar_' ~ periodo) del Twig
+                'facturar_'.$periodo,
                 (string) $request->request->get('_token'),
             )
         ) {
@@ -91,10 +82,8 @@ class FacturacionController extends AbstractController
         }
 
         try {
-            // Crea Factura + FacturaItem, asocia liquidaciones y genera archivo plano
             $factura = $facturacionService->crear($periodo);
 
-            // Mensaje de éxito con el folio asignado
             $this->addFlash(
                 'success',
                 sprintf(
@@ -103,12 +92,10 @@ class FacturacionController extends AbstractController
                 )
             );
 
-            // PRG: redirect al detalle de la factura creada
             return $this->redirectToRoute('facturacion_show', [
                 'id' => $factura->getId(),
             ]);
         } catch (\DomainException|\InvalidArgumentException $exception) {
-            // Falló la creación (ej. ya no hay pendientes) → flash y vuelve al form
             $this->addFlash('error', $exception->getMessage());
 
             return $this->redirectToRoute('facturacion_nueva');
@@ -130,7 +117,6 @@ class FacturacionController extends AbstractController
     )]
     public function show(Factura $factura): Response
     {
-        // Pasa la entidad a la vista Twig
         return $this->render('facturacion/show.html.twig', [
             'factura' => $factura,
         ]);
@@ -150,14 +136,13 @@ class FacturacionController extends AbstractController
     )]
     public function descargar(Factura $factura): Response
     {
-        // Respuesta HTTP con el contenido del archivo plano
+
         return new Response(
-            $factura->getArchivoPlano(), // Cuerpo: texto Encabezado/Totales/Detalle
+            $factura->getArchivoPlano(),
             Response::HTTP_OK, // Status 200
             [
-                // Indica al navegador que es texto plano
+
                 'Content-Type' => 'text/plain; charset=UTF-8',
-                // Fuerza descarga con nombre factura-{folio}.txt
                 'Content-Disposition' => sprintf(
                     'attachment; filename="factura-%d.txt"',
                     $factura->getFolio(),

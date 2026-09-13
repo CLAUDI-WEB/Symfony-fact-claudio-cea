@@ -3,126 +3,130 @@
 {% block title %}Editar liquidación #{{ liquidacion.id }}{% endblock %}
 
 {% block body %}
-    <div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
-        <p>
-            <a href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}" data-turbo="false">
-                &larr; Volver al detalle
-            </a>
-        </p>
+{% include 'partials/pop_styles.html.twig' %}
 
-        <h1>Editar liquidación #{{ liquidacion.id }}</h1>
+<div class="pop-page">
+    <header class="pop-topbar">
+        <div class="pop-brand">
+            <span class="pop-dots" aria-hidden="true"></span>
+            <strong>Facturación</strong>
+            <span class="pop-muted">· Editar</span>
+        </div>
+        <a
+            class="pop-btn pop-btn--ghost"
+            href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}"
+            data-turbo="false"
+        >
+            Volver al detalle
+        </a>
+    </header>
 
-        <p>
-            <strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}
-            &nbsp;|&nbsp;
-            <strong>Total actual:</strong> {{ liquidacion.total }}
-        </p>
-
-        {% for message in app.flashes('success') %}
-            <p style="color: green;">{{ message }}</p>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <p style="color: red;">{{ message }}</p>
-        {% endfor %}
-
-        {% if liquidacion.facturada %}
-            <p><em>No se puede editar: ya está facturada.</em></p>
-        {% else %}
-            <form
-                method="post"
-                action="{{ path('app_liquidacion_modify', {id: liquidacion.id}) }}"
+    <main class="pop-main">
+        <div class="pop-panel">
+            <a
+                class="pop-back"
+                href="{{ path('app_liquidacion_show', {id: liquidacion.id}) }}"
                 data-turbo="false"
             >
-                <input type="hidden" name="_token" value="{{ csrf_token('modificar' ~ liquidacion.id) }}">
+                &larr; Volver al detalle
+            </a>
 
-                <h2>Datos de la liquidación</h2>
+            <p class="pop-pill">Edición</p>
+            <h1>Editar liquidación #{{ liquidacion.id }}</h1>
+            <p class="pop-meta">
+                <strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}
+                &nbsp;·&nbsp;
+                <strong>Total actual:</strong>
+                ${{ liquidacion.total|number_format(0, ',', '.') }}
+            </p>
 
-                <p>
-                    <label>
-                        Período
-                        <input type="text" name="periodo" value="{{ liquidacion.periodo }}" maxlength="7">
-                    </label>
-                </p>
+            {% for message in app.flashes('success') %}
+                <p class="pop-flash pop-flash--success">{{ message }}</p>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <p class="pop-flash pop-flash--error">{{ message }}</p>
+            {% endfor %}
 
-                <p>
-                    <label>
-                        Estado
-                        <select name="estado">
-                            <option value="draft" {% if liquidacion.estado == 'draft' %}selected{% endif %}>draft</option>
-                            <option value="paid" {% if liquidacion.estado == 'paid' %}selected{% endif %}>paid</option>
-                        </select>
-                    </label>
-                </p>
+            {% if liquidacion.facturada %}
+                <p class="pop-note"><em>No se puede editar: ya está facturada.</em></p>
+            {% else %}
+                <form
+                    method="post"
+                    action="{{ path('app_liquidacion_modify', {id: liquidacion.id}) }}"
+                    data-turbo="false"
+                >
+                    <input type="hidden" name="_token" value="{{ csrf_token('modificar' ~ liquidacion.id) }}">
 
-                <h2>Ítems</h2>
+                    <h2>Datos de la liquidación</h2>
 
-                {% for item in liquidacion.items %}
-                    <fieldset style="margin-bottom: 1em; padding: 1em; border: 1px solid #ccc;">
-                        <legend>Ítem {{ loop.index }}</legend>
+                    <div class="pop-form-row">
+                        <label>
+                            Período
+                            <input type="text" name="periodo" value="{{ liquidacion.periodo }}" maxlength="7">
+                        </label>
+                    </div>
 
-                        <p>
-                            <label>
-                                Tipo
-                                <select name="items[{{ loop.index0 }}][tipo]">
-                                    <option value="cargo" {% if item.tipo == 'cargo' %}selected{% endif %}>cargo</option>
-                                    <option value="descuento" {% if item.tipo == 'descuento' %}selected{% endif %}>descuento</option>
-                                </select>
-                            </label>
-                        </p>
+                    <div class="pop-form-row">
+                        <label>
+                            Estado
+                            <select name="estado">
+                                <option value="draft" {% if liquidacion.estado == 'draft' %}selected{% endif %}>draft</option>
+                                <option value="paid" {% if liquidacion.estado == 'paid' %}selected{% endif %}>paid</option>
+                            </select>
+                        </label>
+                    </div>
 
-                        <p>
-                            <label>
-                                Descripción
-                                <input
-                                    type="text"
-                                    name="items[{{ loop.index0 }}][descripcion]"
-                                    value="{{ item.descripcion }}"
-                                >
-                            </label>
-                        </p>
+                    <h2>Ítems</h2>
 
-                        <p>
-                            <label>
-                                Monto
-                                <input
-                                    type="number"
-                                    name="items[{{ loop.index0 }}][monto]"
-                                    value="{{ item.monto }}"
-                                    min="0"
-                                >
-                            </label>
-                        </p>
-                    </fieldset>
-                {% else %}
-                    <p><em>No hay ítems.</em></p>
-                {% endfor %}
-                {% if not liquidacion.facturada %}
-                    <button type="submit">Guardar cambios</button>
-                {% endif %}
-            </form>
-        {% endif %}
-    </div>
+                    {% for item in liquidacion.items %}
+                        <fieldset>
+                            <legend>Ítem {{ loop.index }}</legend>
 
+                            <div class="pop-form-row">
+                                <label>
+                                    Tipo
+                                    <select name="items[{{ loop.index0 }}][tipo]">
+                                        <option value="cargo" {% if item.tipo == 'cargo' %}selected{% endif %}>cargo</option>
+                                        <option value="descuento" {% if item.tipo == 'descuento' %}selected{% endif %}>descuento</option>
+                                    </select>
+                                </label>
+                            </div>
 
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse; /* Une los bordes en una sola línea */
-  }
+                            <div class="pop-form-row">
+                                <label>
+                                    Descripción
+                                    <input
+                                        type="text"
+                                        name="items[{{ loop.index0 }}][descripcion]"
+                                        value="{{ item.descripcion }}"
+                                    >
+                                </label>
+                            </div>
 
-  th, td {
-    border: 1px solid #ccc; /* Define el grosor, estilo y color de la línea */
-    padding: 8px;           /* Espacio interno para mayor legibilidad */
-    text-align: left;
-  }
+                            <div class="pop-form-row">
+                                <label>
+                                    Monto
+                                    <input
+                                        type="number"
+                                        name="items[{{ loop.index0 }}][monto]"
+                                        value="{{ item.monto }}"
+                                        min="0"
+                                    >
+                                </label>
+                            </div>
+                        </fieldset>
+                    {% else %}
+                        <p class="pop-note"><em>No hay ítems.</em></p>
+                    {% endfor %}
 
-  th {
-    background-color: #f2f2f2;
-  }
-  p{
-      border: 1px solid #ccc; /* Define el grosor, estilo y color de la línea */
-    padding: 8px;           /* Espacio interno para mayor legibilidad */
-    text-align: left;
-  }
-</style>
+                    {% if not liquidacion.facturada %}
+                        <div class="pop-actions-row">
+                            <button type="submit">Guardar cambios</button>
+                        </div>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    </main>
+</div>
 {% endblock %}

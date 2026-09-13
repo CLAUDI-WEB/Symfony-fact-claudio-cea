@@ -3,55 +3,94 @@
 {% block title %}Liquidación #{{ liquidacion.id }}{% endblock %}
 
 {% block body %}
-    <div style="margin: 2em auto; max-width: 900px; font: 16px/1.5 sans-serif;">
-        <p><a href="{{ path('app_liquidacion_index') }}" data-turbo="false">&larr; Volver al listado</a></p>
+{% include 'partials/pop_styles.html.twig' %}
 
-        <h1>Liquidación #{{ liquidacion.id }}</h1>
+<div class="pop-page">
+    <header class="pop-topbar">
+        <div class="pop-brand">
+            <span class="pop-dots" aria-hidden="true"></span>
+            <strong>Facturación</strong>
+            <span class="pop-muted">· Detalle</span>
+        </div>
+        <a class="pop-btn pop-btn--ghost" href="{{ path('app_liquidacion_index') }}" data-turbo="false">
+            Volver al listado
+        </a>
+    </header>
 
-        {% for message in app.flashes('success') %}
-            <p style="color: green;">{{ message }}</p>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <p style="color: red;">{{ message }}</p>
-        {% endfor %}
+    <main class="pop-main">
+        <div class="pop-panel">
+            <a class="pop-back" href="{{ path('app_liquidacion_index') }}" data-turbo="false">
+                &larr; Volver al listado
+            </a>
 
-        <ul>
-            <li><strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}</li>
-            <li><strong>Período:</strong> {{ liquidacion.periodo }}</li>
-            <li><strong>Estado:</strong> {{ liquidacion.estado }}</li>
-            <li><strong>Total:</strong> {{ liquidacion.total }}</li>
-        </ul>
+            <p class="pop-pill">Liquidación</p>
+            <h1>Liquidación #{{ liquidacion.id }}</h1>
+            <p class="pop-subtitle">Detalle de propiedad, período e ítems.</p>
 
-        <h2>Ítems</h2>
-        <table border="1" cellpadding="8" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Descripción</th>
-                    <th>Monto</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in liquidacion.items %}
+            {% for message in app.flashes('success') %}
+                <p class="pop-flash pop-flash--success">{{ message }}</p>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <p class="pop-flash pop-flash--error">{{ message }}</p>
+            {% endfor %}
+
+            <ul class="pop-list">
+                <li><strong>Propiedad:</strong> {{ liquidacion.propiedad.nombre }}</li>
+                <li><strong>Período:</strong> {{ liquidacion.periodo }}</li>
+                <li>
+                    <strong>Estado:</strong>
+                    <span class="pop-badge pop-badge--{{ liquidacion.estado }}">
+                        {{ liquidacion.estado }}
+                    </span>
+                </li>
+                <li>
+                    <strong>Total:</strong>
+                    <span class="pop-total">${{ liquidacion.total|number_format(0, ',', '.') }}</span>
+                </li>
+            </ul>
+
+            <h2>Ítems</h2>
+            <table class="pop-table">
+                <thead>
                     <tr>
-                        <td>{{ item.tipo }}</td>
-                        <td>{{ item.descripcion }}</td>
-                        <td>{{ item.monto }}</td>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3">Sin ítems</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% if liquidacion.estado == 'draft' and not liquidacion.facturada %}
-            <form method="post" action="{{ path('app_liquidacion_pagar', {id: liquidacion.id}) }}" style="margin-top: 1.5em;">
-                <input type="hidden" name="_token" value="{{ csrf_token('pagar' ~ liquidacion.id) }}">
-                <button type="submit">Pagar liquidación</button>
-            </form>
-        {% elseif liquidacion.estado == 'paid' %}
-            <p style="margin-top: 1.5em;"><em>Esta liquidación ya está pagada.</em></p>
-        {% endif %}
-    </div>
+                </thead>
+                <tbody>
+                    {% for item in liquidacion.items %}
+                        <tr>
+                            <td>{{ item.tipo }}</td>
+                            <td>{{ item.descripcion }}</td>
+                            <td class="pop-total">${{ item.monto|number_format(0, ',', '.') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">Sin ítems</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pop-actions-row">
+                {% if liquidacion.estado == 'draft' and not liquidacion.facturada %}
+                    <a
+                        class="pop-btn pop-btn--ghost"
+                        href="{{ path('app_liquidacion_modify_form', {id: liquidacion.id}) }}"
+                        data-turbo="false"
+                    >
+                        Editar
+                    </a>
+                    <form method="post" action="{{ path('app_liquidacion_pagar', {id: liquidacion.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('pagar' ~ liquidacion.id) }}">
+                        <button type="submit">Pagar liquidación</button>
+                    </form>
+                {% elseif liquidacion.estado == 'paid' %}
+                    <p class="pop-note" style="margin: 0;">Esta liquidación ya está pagada.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
 {% endblock %}
