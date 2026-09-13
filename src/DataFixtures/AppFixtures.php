@@ -44,47 +44,6 @@ class AppFixtures extends Fixture
             ->setArrendatario($arrendatario);
         $manager->persist($propiedad);
 
-        // Temporal (retirar antes de entregar): períodos antiguos para probar preview por período
-        $liqEnero = (new Liquidacion())
-            ->setPropiedad($propiedad)
-            ->setPeriodo('2026-01')
-            ->setEstado('paid');
-
-        $liqEnero->addItem(
-            (new LiquidacionItem())
-                ->setTipo('cargo')
-                ->setDescripcion('Arriendo enero 2026')
-                ->setMonto(500000)
-        );
-        $liqEnero->addItem(
-            (new LiquidacionItem())
-                ->setTipo('descuento')
-                ->setDescripcion('Descuento temporal')
-                ->setMonto(30000)
-        );
-        $liqEnero->recalculate(); // 470000
-        $manager->persist($liqEnero);
-
-        $liqFebrero = (new Liquidacion())
-            ->setPropiedad($propiedad)
-            ->setPeriodo('2026-02')
-            ->setEstado('paid');
-
-        $liqFebrero->addItem(
-            (new LiquidacionItem())
-                ->setTipo('cargo')
-                ->setDescripcion('Arriendo febrero 2026')
-                ->setMonto(500000)
-        );
-        $liqFebrero->addItem(
-            (new LiquidacionItem())
-                ->setTipo('descuento')
-                ->setDescripcion('Descuento temporal')
-                ->setMonto(5000)
-        );
-        $liqFebrero->recalculate(); // 495000
-        $manager->persist($liqFebrero);
-
         // Liquidación 1 (paid) - mismo período
         $liq1 = (new Liquidacion())
             ->setPropiedad($propiedad)
